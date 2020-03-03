@@ -2,89 +2,27 @@ import React from 'react';
 import logo from './logo.svg';
 import {Flow} from 'vexflow';
 
-// https://gist.github.com/ryansmith94/91d7fd30710264affeb9
-function convertBase(value, from_base, to_base) {
-  var range = Array.from('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+/');
-  var from_range = range.slice(0, from_base);
-  var to_range = range.slice(0, to_base);
-  
-  var dec_value = value.split('').reverse().reduce(function (carry, digit, index) {
-    if (from_range.indexOf(digit) === -1) throw new Error('Invalid digit `'+digit+'` for base '+from_base+'.');
-    return carry += from_range.indexOf(digit) * (Math.pow(from_base, index));
-  }, 0);
-  
-  var new_value = '';
-  while (dec_value > 0) {
-    new_value = to_range[dec_value % to_base] + new_value;
-    dec_value = (dec_value - (dec_value % to_base)) / to_base;
-  }
-  return new_value || '0';
+import getNotesPermutations from './scripts/getNotesPermutations.js';
+import { convertBase2, convertBase } from './scripts/convertBase.js';
+
+console.log("--BEGIN TESTING--")
+
+function test(string, baseFrom, baseTo, radix){
+  let converted = convertBase(string, baseFrom, baseTo, radix)
+  let reconverted = convertBase(converted, baseTo, baseFrom, radix)
+  console.log({
+    string: string,
+    converted: converted,
+    reconverted: reconverted,
+    equal: string.localeCompare(reconverted) == 0 ? "PASSED" : "failed"
+  })
 }
 
 
-function convertBase10toX(value, to_base){
-  let radix = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
-  let Z = [];
-  let M = -1;
-  for (let i = value; 0 < i; i = Math.floor(i / to_base)) { 
-    if(i % to_base >= 10) { 
-      Z.push(radix[i % to_base - 10]);
-    } else { 
-      Z.push(i % to_base);
-    } 
-    M = M + 1;
-  } 
-  console.log(Z)
-  return Z.reverse().join(" - ")
-  // for (j = M; j >= 0; j--) {
-  //   document.write(Z[j]);
-  // } 
-}
+test("5a2a9c826c75045be9ba8fbffc80c6f25a2a9c826c75045be9ba8fbffc80c6f2", 16, 54, '')
+test("5a2a9c826c75045be9ba8fbffc80c6f25a2a9c826c75045be9ba8fbffc80c6f2", 16, 3, '')
 
-
-
-/*
-* expected values:
-*  "c/4/16/0/0"
-*  "c/4/16/0/1"
-*  "c/4/16/1/0"
-*  "c/4/16/1/1"
-*  "c/4/8/0/0"
-*  ...
-*  "b/5/2/1/1"
-*
-* permutation calc
-* (expected length)
-* 12 * 2 * 4 * 2 * 2 = 384 
-*/
-function getNotesPermutations(){
-  //note combinations
-  let weights = [
-    ["4", "5"], //octave
-    ["c", "c#", "d", "d#", "e", "f", "f#", "g", "g#", "a", "a#", "b"],
-    ["16", "8", "4", "2"], //duration
-    [0, 1], //is dotted
-    [0, 1] //is rest
-  ]
-
-  let output = [];
-
-  for(let octave of weights[0]){
-    for(let note of weights[1]){
-      for(let duration of weights[2]){
-        for(let isDotted of weights[3]){
-          for(let isRest of weights[4]){
-            output.push( [note, octave, duration, isDotted, isRest].join("/") )
-          }
-        }
-      }
-    }
-  }
-
-  return output;
-}
-console.log(getNotesPermutations())
-
+console.log("--END TESTING--")
 
 function App() {
   let [index, setIndex] = React.useState(1);
@@ -132,7 +70,6 @@ function App() {
       return generated;
     });
 
-    console.log(notes)
     let beams = VF.Beam.generateBeams(notes);
     VF.Formatter.FormatAndDraw(context, stave, notes);
     beams.forEach(function(b) {b.setContext(context).draw()})
@@ -144,10 +81,11 @@ function App() {
   function updateData(value){
     if(value>1){
       setIndex(value);
-      // setBase1(convertBase10toX(value, 20))
-      // setBase2(convertBase(''+value, 10, 20))
-
-      // setToDecimal(convertBase(base2, 20, 10))
+      console.log(index)
+      value = String(value)
+      let baseX = convertBase(value, 10, 20)
+      console.log(baseX)
+      console.log(convertBase(String(baseX), 20, 10))
     }
   }
   return (
