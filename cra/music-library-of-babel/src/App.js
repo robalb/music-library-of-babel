@@ -41,6 +41,51 @@ function convertBase10toX(value, to_base){
   // } 
 }
 
+
+
+/*
+* expected values:
+*  "c/4/16/0/0"
+*  "c/4/16/0/1"
+*  "c/4/16/1/0"
+*  "c/4/16/1/1"
+*  "c/4/8/0/0"
+*  ...
+*  "b/5/2/1/1"
+*
+* permutation calc
+* (expected length)
+* 12 * 2 * 4 * 2 * 2 = 384 
+*/
+function getNotesPermutations(){
+  //note combinations
+  let weights = [
+    ["c", "c#", "d", "d#", "e", "f", "f#", "g", "g#", "a", "a#", "b"],
+    ["4", "5"], //octave
+    ["16", "8", "4", "2"], //duration
+    [0, 1], //is dotted
+    [0, 1] //is rest
+  ]
+
+  let output = [];
+
+  for(let note of weights[0]){
+    for(let octave of weights[1]){
+      for(let duration of weights[2]){
+        for(let isDotted of weights[3]){
+          for(let isRest of weights[4]){
+            output.push( [note, octave, duration, isDotted, isRest].join("/") )
+          }
+        }
+      }
+    }
+  }
+
+  return output;
+}
+console.log(getNotesPermutations())
+
+
 function App() {
   let [index, setIndex] = React.useState(1);
   let [base1, setBase1] = React.useState(1);
@@ -67,29 +112,26 @@ function App() {
     stave.setContext(context).draw();
 
 
-    let durations = ['16', '16d', '8', '8d', '4', '4d', '2', '2d']
-    durations = ['q']
-    let notes = [
-      ['c', '#', '4'],
-      ['e', 'b', '5'],
-      ['g', '', '5'],
-      ['d', 'b', '4'],
-      ['b', 'bb', '3'],
-      ['a', 'b', '4'],
-      ['f', 'b', '5'],
-      ['f', 'b', '5'],
-      ['c', '#', '4'],
-      ['e', 'b', '5'],
-      ['g', '', '5'],
-      ['d', 'b', '4'],
-    ].map(([letter, acc, octave]) => { // using ES6 Array Destructuring here
-      return new VF.StaveNote({
+    let notes = getNotesPermutations().slice(-10)
+    console.log(notes)
+    notes = notes.map(note => {
+      //parse note format
+      let [letterAndAcc, octave, duration, isDotted, isRest] = note.split("/")
+      if(isRest === "1") duration += "r";
+      //generate note
+      let generated = new VF.StaveNote({
         clef: "treble",
-        keys: [`${letter}${acc}/${octave}`],
-        duration: durations[Math.floor(Math.random()*durations.length)]
-      }).addDotToAll()
+        keys: [`${letterAndAcc}/${octave}`],
+        duration: duration
+      });
+      if(isDotted === "1"){
+        generated.addDotToAll();
+      }
+
+      return generated;
     });
 
+    console.log(notes)
     let beams = VF.Beam.generateBeams(notes);
     VF.Formatter.FormatAndDraw(context, stave, notes);
     beams.forEach(function(b) {b.setContext(context).draw()})
