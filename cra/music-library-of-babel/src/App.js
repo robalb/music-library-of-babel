@@ -60,8 +60,8 @@ function convertBase10toX(value, to_base){
 function getNotesPermutations(){
   //note combinations
   let weights = [
-    ["c", "c#", "d", "d#", "e", "f", "f#", "g", "g#", "a", "a#", "b"],
     ["4", "5"], //octave
+    ["c", "c#", "d", "d#", "e", "f", "f#", "g", "g#", "a", "a#", "b"],
     ["16", "8", "4", "2"], //duration
     [0, 1], //is dotted
     [0, 1] //is rest
@@ -69,8 +69,8 @@ function getNotesPermutations(){
 
   let output = [];
 
-  for(let note of weights[0]){
-    for(let octave of weights[1]){
+  for(let octave of weights[0]){
+    for(let note of weights[1]){
       for(let duration of weights[2]){
         for(let isDotted of weights[3]){
           for(let isRest of weights[4]){
@@ -112,7 +112,8 @@ function App() {
     stave.setContext(context).draw();
 
 
-    let notes = getNotesPermutations().slice(-10)
+    let rndIndex = Math.floor(Math.random()*300)
+    let notes = getNotesPermutations().slice(rndIndex, rndIndex+10)
     console.log(notes)
     notes = notes.map(note => {
       //parse note format
