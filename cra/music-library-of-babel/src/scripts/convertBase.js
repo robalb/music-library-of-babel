@@ -1,5 +1,6 @@
 // https://www.danvk.org/hex2dec.html
 
+// https://gist.github.com/ryansmith94/91d7fd30710264affeb9
 // https://stackoverflow.com/a/55011290
 function convertBase(str, fromBase, toBase) {
 
