@@ -1,12 +1,12 @@
 {
-  "name": "music-library-of-babel",
+  "name": "Music-library-of-babel",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "webpack-dev-server --mode development --open",
-    "build": "webpack --mode production"
+    "start": "set \"INLINE_RUNTIME_CHUNK=false\" && webpack-dev-server --mode development --open",
+    "build": "set \"INLINE_RUNTIME_CHUNK=false\" && webpack --mode production"
   },
   "keywords": [],
   "author": "",
@@ -24,6 +24,7 @@
     "neutrino": "^9.1.0",
     "webpack": "^4.41.6",
     "webpack-cli": "^3.3.11",
-    "webpack-dev-server": "^3.10.3"
+    "webpack-dev-server": "^3.10.3",
+    "webpack-stats-plugin": "^0.3.1"
   }
 }
