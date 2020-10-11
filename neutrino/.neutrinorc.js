@@ -9,7 +9,7 @@ const glob = require('glob');
 
 //configure here the basepath for different development environments
 //in production this variable is not used, as the basePath is always '/'
-var ENV_BASE_PATH = '/people/web/www';
+var ENV_BASE_PATH = '/music-library-of-babel/web/www';
 
 module.exports = {
   options: {
